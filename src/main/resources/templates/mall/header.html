@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head-fragment(title,path)">
+    <meta charset="UTF-8">
+    <title>温投商城 NewBee商城 newbee-mall</title>
+    <!-- 引入jQuery官方类库 -->
+    <script src="js/jquery.min.js"></script>
+    <!-- 图片上传jQueryForm -->
+    <script src="js/jquery.form.js"></script>
+
+    <link rel="stylesheet" th:href="@{/mall/css/swiper.min.css}">
+    <link rel="stylesheet" th:href="@{/mall/css/iconfont.css}">
+    <link rel="stylesheet" th:href="@{/mall/css/common.css}">
+    <link rel="stylesheet" th:href="@{/mall/styles/header.css}">
+    <link rel="stylesheet" th:href="@{'/mall/styles/'+${path}+'.css'}">
+    <link rel="stylesheet" th:href="@{/admin/plugins/sweetalert/sweetalert.css}"/>
+    <meta name="keywords" content="#"/>
+    <meta name="description" content="#"/>
+</head>
+<nav id="nav" th:fragment="nav-fragment">
+    <div class="banner_x center">
+        <a th:href="@{/index}" class="logo"><h1>温投商城</h1></a>
+        <ul class="list">
+            <li><a href="##">秒杀</a></li>
+            <li><a href="##">优惠券</a></li>
+        </ul>
+        <div class="fr">
+            <div class="search">
+                <input class="text" type="text" id="keyword" autocomplete="off">
+                <div class="search_hot">
+                </div>
+
+            </div>
+            <div>
+                <form id="form" role="form" method="post" action="/product/uploadSearchPic"
+                      enctype="multipart/form-data">
+                    <label>
+                        <img class="button iconfont icon-picture-search" style="vertical-align: middle">
+                        <input id="file" class="button iconfont icon-picture-search" type="file"
+                               accept="image/jpg,image/jpeg,image/png" name="personfile" style="display: none"/>
+                    </label>
+                    <input class="btn btn-primary" style="display:none" value="提交" type="submit"/>
+                </form>
+            </div>
+            <div class="button iconfont icon-search" onclick="search()"></div>
+        </div>
+    </div>
+</nav>
+<header id="header" th:fragment="header-fragment">
+    <div class="center">
+        <ul class="fl">
+            <li><a th:href="@{/index}">温投商城</a></li>
+            <li><a th:href="@{/admin}">后台管理系统</a></li>
+
+        </ul>
+        <div class="fr">
+            <th:block th:unless="${session.newBeeMallUser==null}">
+                <div class="user">
+                    <ul class="selector">
+                        <li>
+                            <a th:href="@{/personal}">
+                                个人中心
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/orders}">
+                                我的订单
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/logout}">
+                                退出登录
+                            </a>
+                        </li>
+                    </ul>
+                    <a href="##" class="username">
+                        <th:block th:text="${session.newBeeMallUser.nickName}"></th:block>
+                        <i class="iconfont icon-down"></i>
+                    </a>
+                </div>
+                <div class="shopcart">
+                    <a th:href="@{/shop-cart}" style="color: white;"><i class="iconfont icon-cart"></i>
+                        购物车(
+                        <th:block th:text="${session.newBeeMallUser.shopCartItemCount}"></th:block>
+                        )</a>
+                </div>
+            </th:block>
+            <th:block th:if="${session.newBeeMallUser==null}">
+                <ul class="login">
+                    <li><a th:href="@{/login}">登录</a></li>
+                    <li><a th:href="@{/register}">注册</a></li>
+                </ul>
+                <div class="shopcart">
+                    <a href="##" style="color: white;"><i class="iconfont icon-cart"></i>
+                        购物车(0)</a>
+                </div>
+            </th:block>
+        </div>
+    </div>
+    <script th:src="@{/admin/plugins/ajaxupload/ajaxupload.js}"></script>
+    <script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+    <!--图片上传onchange事件，选择图片自动提交form-->
+    <script>
+        $(function () {
+            $("#file").on("change", function () {
+                $("#form").submit();
+            });
+        });
+    </script>
+    <!--测试按钮发送的ajax，项目中需要页面跳转，带数据麻烦，不需要了-->
+    <script>
+        //图片原件上传功能
+        function gosubmit(file, key) {
+            var formData = new FormData($("#inputForm")[0]);
+            formData.append('pic', file.files[0]);
+            $.ajax({
+                url: '/product/uploadSearchPic',
+                type: 'post',
+                contentType: false,
+                data: formData,
+                processData: false,
+                success: function (data) {
+                    $("#licencePicUrl").css('display', 'block');
+                    $("#licencePicUrl").attr("src", data.url);
+                    $("#licencePic").val(data.url);
+                    location.href = "search";
+                },
+                error: function (err) {
+                    alert("请检查网络");
+                }
+            });
+        }
+    </script>
+
+</header>
+</html>
